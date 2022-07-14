@@ -51,16 +51,7 @@ Object.assign(UserSchema.statics, {
    Profil,
 });
 
-function validate(user) {
-   const schema = Joi.object({
-      prenom: Joi.string().min(3).max(100).required(),
-      nom: Joi.string().min(3).max(50).required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(5).max(50).required(),
-   });
 
-   return schema.validate(user);
-}
 
 module.exports.validateRegister = validate;
 module.exports = mongoose.model("User", UserSchema);

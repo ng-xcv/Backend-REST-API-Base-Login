@@ -75,22 +75,34 @@ router.put(
    async (req, res) => {
       try {
          const user = await User.findById(req.params.id);
-         console.log(user);
          if (!user)
-            res.status(400).send("Aucun utilisateur n'est associé a cet ID 🤷🏽‍♂️");
+            return res
+               .status(400)
+               .send("Aucun utilisateur n'est associé a cet ID 🤷🏽‍♂️");
 
          if (!Object.values(Profil).includes(req.body.profil.toLowerCase()))
             return res
                .status(404)
                .send("Ce profil n'existe tout simplement pas 😤");
 
+         if (user.profil === req.body.profil.toLowerCase())
+            return res
+               .status(400)
+               .send(
+                  `${user.prenom} ${user.nom} est déja un ${req.body.profil} 🤷🏽‍♂️`
+               );
+
          const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             { $set: { ...req.body, profil: req.body.profil.toLowerCase() } },
             { new: true }
          );
-         console.log(updatedUser);
-         res.status(200).send(updatedUser);
+
+         res.status(200).send(
+            `${user.prenom} ${user.nom} est passé(e) de ${
+               user.profil
+            } à ${req.body.profil.toLowerCase()} `
+         );
       } catch (error) {
          res.status(500).send(error);
       }
@@ -106,6 +118,6 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 
 localStorage.getItem("user") &&
    console.log(JSON.parse(localStorage.getItem("user")).accessToken);
-
 ========================================================== */
+
 module.exports = router;
